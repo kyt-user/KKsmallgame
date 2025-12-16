@@ -1,0 +1,322 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* 版本选择页面样式 */
+#versionSelect {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+.container {
+    text-align: center;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    color: #333;
+}
+
+.buttons {
+    margin-top: 2rem;
+}
+
+.btn {
+    display: block;
+    width: 200px;
+    padding: 1rem;
+    margin: 1rem auto;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-desktop {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.btn-mobile {
+    background-color: #2196F3;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+/* 游戏界面通用样式 */
+#gameContainer {
+    display: none;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+}
+
+#topBar {
+    height: 56px;
+    background: linear-gradient(to bottom, #333, #222);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #fff;
+}
+
+#modeSelection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 24px;
+}
+
+#modeButtons {
+    display: flex;
+    gap: 12px;
+}
+
+.mode-btn {
+    padding: 8px 20px;
+    background: linear-gradient(to bottom, #4ecdc4, #3ab0a8);
+    color: #111;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.mode-btn.active {
+    background: linear-gradient(to bottom, #ff6b6b, #e55555);
+    color: white;
+}
+
+#canvas {
+    flex: 1;
+    width: 100%;
+    background: #1a3d1a;
+    display: block;
+}
+
+#countdownOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 140px;
+    font-weight: bold;
+    z-index: 100;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+    color: #fff;
+}
+
+#pauseMask {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 30px;
+    font-size: 32px;
+    z-index: 50;
+    backdrop-filter: blur(4px);
+    color: #fff;
+}
+
+#pauseMask button {
+    padding: 15px 32px;
+    font-size: 20px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(to bottom, #4ecdc4, #3da8a0);
+    color: #111;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: all 0.2s ease;
+}
+
+#pauseMask button:hover {
+    transform: scale(1.05);
+}
+
+#scores {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    gap: 15px;
+}
+
+.player-score {
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+    min-width: 100px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.player1 {
+    background: linear-gradient(to bottom, #ff6b6b, #e55555);
+}
+
+.player2 {
+    background: linear-gradient(to bottom, #4ecdc4, #3da8a0);
+}
+
+.player3 {
+    background: linear-gradient(to bottom, #ffe66d, #ffd74d);
+    color: #000;
+}
+
+.player4 {
+    background: linear-gradient(to bottom, #6a0572, #520459);
+}
+
+/* 移动版特定样式 */
+#gameContainer.mobile-layout #topBar {
+    height: 48px;
+    background: #222;
+    padding: 0 12px;
+    font-size: 16px;
+}
+
+#gameContainer.mobile-layout #modeSelection {
+    gap: 10px;
+}
+
+#gameContainer.mobile-layout #modeButtons {
+    gap: 5px;
+}
+
+#gameContainer.mobile-layout .mode-btn {
+    padding: 2px 8px;
+    background: #4ecdc4;
+    color: #111;
+    border-radius: 4px;
+    font-size: 14px;
+    box-shadow: none;
+}
+
+#gameContainer.mobile-layout .mode-btn.active {
+    background: #ff6b6b;
+    color: white;
+}
+
+#gameContainer.mobile-layout #scores {
+    gap: 10px;
+}
+
+#gameContainer.mobile-layout .player-score {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 14px;
+    min-width: auto;
+}
+
+#gameContainer.mobile-layout #canvas {
+    touch-action: none;
+}
+
+#ctrlRow {
+    height: 140px;
+    background: #222;
+    display: none;
+    justify-content: space-between;
+    padding: 12px;
+}
+
+.ctrlBox {
+    display: flex;
+    gap: 12px;
+}
+
+.stick {
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 255, 255, .08);
+    border: 2px solid rgba(255, 255, 255, .25);
+    border-radius: 50%;
+    position: relative;
+    touch-action: none;
+}
+
+.knob {
+    width: 40px;
+    height: 40px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: .9;
+}
+
+.btn-fire {
+    width: 80px;
+    height: 80px;
+    background: #ff6b6b;
+    border-radius: 50%;
+    font-size: 18px;
+    color: #fff;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-fire:active {
+    transform: scale(.92);
+}
+
+#gameContainer.mobile-layout #ctrlRow {
+    display: flex;
+}
+
+#gameContainer:not(.mobile-layout) #ctrlRow {
+    height: 140px;
+    background: #222;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    font-size: 18px;
+    color: #fff;
+}

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>坦克大战 – 挑战 Kimi</title>
+    <style>
+        *{box-sizing:border-box;margin:0;padding:0}
+        body{
+            height:100vh;
+            background:#111;
+            color:#fff;
+            font-family:Helvetica,Arial,sans-serif;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+            -webkit-user-select:none;user-select:none;
+            -webkit-tap-highlight-color:transparent;
+        }
+        #topBar{
+            height:48px;
+            background:#222;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:0 12px;
+            font-size:16px;
+        }
+        #canvas{
+            flex:1;
+            width:100%;
+            background:#1a3d1a;
+            touch-action:none;
+        }
+        #ctrlRow{
+            height:140px;
+            background:#222;
+            display:flex;
+            justify-content:space-between;
+            padding:12px;
+        }
+        .ctrlBox{
+            display:flex;
+            gap:12px;
+        }
+        .stick{
+            width:100px;height:100px;
+            background:rgba(255,255,255,.08);
+            border:2px solid rgba(255,255,255,.25);
+            border-radius:50%;
+            position:relative;
+            touch-action:none;
+        }
+        .knob{
+            width:40px;height:40px;
+            background:#fff;
+            border-radius:50%;
+            position:absolute;
+            top:50%;left:50%;
+            transform:translate(-50%,-50%);
+            opacity:.9;
+        }
+        .btn{
+            width:80px;height:80px;
+            background:#ff6b6b;
+            border-radius:50%;
+            font-size:18px;
+            color:#fff;
+            border:none;
+            box-shadow:0 4px 12px rgba(0,0,0,.4);
+            display:flex;align-items:center;justify-content:center;
+        }
+        .btn:active{transform:scale(.92)}
+        #pauseMask{
+            position:fixed;
+            inset:0;
+            background:rgba(0,0,0,.75);
+            display:none;
+            align-items:center;
+            justify-content:center;
+            flex-direction:column;
+            gap:20px;
+            font-size:24px;
+        }
+        #pauseMask button{
+            padding:12px 24px;
+            font-size:18px;
+            border:none;
+            border-radius:8px;
+            background:#4ecdc4;
+            color:#111;
+        }
+    </style>
+</head>
+<body>
+
+<header id="topBar">
+    <span>你 <b id="myHP">100</b></span>
+    <span id="status">准备战斗</span>
+    <span>Kimi <b id=kimiHP>100</b></span>
+</header>
+
+<canvas id="canvas"></canvas>
+
+<div id="ctrlRow">
+    <div class="ctrlBox">
+        <div class="stick" id="moveStick"><div class="knob"></div></div>
+    </div>
+    <div class="ctrlBox">
+        <button class="btn" id="fireBtn">开火</button>
+    </div>
+</div>
+
+<div id="pauseMask">
+    <div id="finalTxt"></div>
+    <button onclick="resetGame()">再来一局</button>
+</div>
+
+<script>
+const canvas=document.getElementById('canvas'),ctx=canvas.getContext('2d');
+const moveStick=document.getElementById('moveStick'),knob=moveStick.querySelector('.knob');
+const fireBtn=document.getElementById('fireBtn');
+
+function resize(){canvas.width=window.innerWidth;canvas.height=canvas.clientHeight;}
+window.addEventListener('resize',resize);resize();
+
+const T={w:36,h:36,speed:3,bulletSpd:7,fireCd:400};
+let W=canvas.width,H=canvas.height;
+
+// 玩家坦克
+const player={x:80,y:H/2,angle:0,hp:100,lastFire:0,bullets:[]};
+// Kimi 坦克
+const kimi={x:W-80,y:H/2,angle:Math.PI,hp:100,lastFire:0,bullets:[],aiCd:0};
+
+function drawTank(t,col){
+    ctx.save();
+    ctx.translate(t.x,t.y);
+    ctx.rotate(t.angle);
+    ctx.fillStyle=col;
+    ctx.fillRect(-T.w/2,-T.h/2,T.w,T.h);
+    ctx.fillStyle='#000';
+    ctx.fillRect(T.w/2-4,-3,18,6);
+    ctx.restore();
+    // 血条
+    ctx.fillStyle='#000';
+    ctx.fillRect(t.x-20,t.y-T.h/2-10,40,4);
+    ctx.fillStyle=col;
+    ctx.fillRect(t.x-20,t.y-T.h/2-10,(t.hp/100)*40,4);
+}
+
+function drawBullets(arr,col){
+    ctx.fillStyle=col;
+    arr.forEach(b=>ctx.fillRect(b.x-3,b.y-3,6,6));
+}
+
+function bulletUpdate(arr){
+    for(let i=arr.length-1;i>=0;i--){
+        let b=arr[i];
+        b.x+=b.vx;b.y+=b.vy;
+        if(b.x<0||b.x>W||b.y<0||b.y>H)arr.splice(i,1);
+    }
+}
+
+function dist(a,b){return Math.hypot(a.x-b.x,a.y-b.y);}
+function hit(t,b){return dist(t,b)<T.w/2+4;}
+
+function checkHit(){
+    player.bullets.forEach((b,i)=>{
+        if(hit(kimi,b)){kimi.hp-=25;player.bullets.splice(i,1);if(kimi.hp<=0)endGame(true);}
+    });
+    kimi.bullets.forEach((b,i)=>{
+        if(hit(player,b)){player.hp-=25;kimi.bullets.splice(i,1);if(player.hp<=0)endGame(false);}
+    });
+}
+
+function updateHP(){
+    document.getElementById('myHP').textContent=Math.max(0,player.hp);
+    document.getElementById('kimiHP').textContent=Math.max(0,kimi.hp);
+}
+
+function endGame(win){
+    gameOver=true;
+    document.getElementById('finalTxt').textContent=win?'你击败了 Kimi！':'Kimi 获胜，再接再厉！';
+    document.getElementById('pauseMask').style.display='flex';
+}
+
+// 简单 AI：瞄准+随机开火+躲避
+function kimiAI(){
+    if(gameOver)return;
+    // 角度瞄准
+    let dx=player.x-kimi.x,dy=player.y-kimi.y;
+    let target=Math.atan2(dy,dx);
+    kimi.angle=target;
+    // 移动：被瞄准时横向移动
+    let danger=player.bullets.some(b=>Math.abs(b.vx)>0&&Math.abs(b.x-kimi.x)<150);
+    if(danger){
+        let perp=kimi.angle+Math.PI/2;
+        kimi.y+=Math.sin(perp)*2;
+    }else{
+        // 上下微移
+        kimi.y+=(Math.sin(Date.now()/600)>0?1:-1)*1.2;
+    }
+    kimi.y=Math.max(T.h/2,Math.min(H-T.h/2,kimi.y));
+    // 开火
+    if(Date.now()-kimi.lastFire>600+Math.random()*400){
+        kimi.bullets.push({x:kimi.x,y:kimi.y,vx:Math.cos(kimi.angle)*T.bulletSpd,vy:Math.sin(kimi.angle)*T.bulletSpd});
+        kimi.lastFire=Date.now();
+    }
+}
+
+// 操控
+let mv={x:0,y:0},firing=false;
+function touchCtrl(){
+    player.x+=mv.x*T.speed;player.y+=mv.y*T.speed;
+    if(player.x<T.w/2)player.x=T.w/2;if(player.x>W-T.w/2)player.x=W-T.w/2;
+    if(player.y<T.h/2)player.y=T.h/2;if(player.y>H-T.h/2)player.y=H-T.h/2;
+    if(firing&&Date.now()-player.lastFire>T.fireCd){
+        player.bullets.push({x:player.x,y:player.y,vx:Math.cos(player.angle)*T.bulletSpd,vy:Math.sin(player.angle)*T.bulletSpd});
+        player.lastFire=Date.now();
+    }
+}
+
+// 虚拟摇杆
+let stickActive=false;
+function handleStick(e){
+    e.preventDefault();
+    const t=e.touches[0];
+    const rect=moveStick.getBoundingClientRect();
+    const cx=rect.left+rect.width/2,cy=rect.top+rect.height/2;
+    let x=t.clientX-cx,y=t.clientY-cy;
+    let d=Math.hypot(x,y),max=rect.width/2-20;
+    if(d>max){x=x/d*max;y=y/d*max;d=max;}
+    knob.style.transform=`translate(${x}px,${y}px)`;
+    mv.x=x/max;mv.y=y/max;
+    if(mv.x!==0||mv.y!==0)player.angle=Math.atan2(mv.y,mv.x);
+}
+moveStick.addEventListener('touchstart',e=>{stickActive=true;handleStick(e)});
+moveStick.addEventListener('touchmove',e=>{if(stickActive)handleStick(e)});
+moveStick.addEventListener('touchend',e=>{stickActive=false;mv={x:0,y:0};knob.style.transform='translate(0,0)'});
+
+fireBtn.addEventListener('touchstart',e=>{firing=true;e.preventDefault()});
+fireBtn.addEventListener('touchend',e=>{firing=false;e.preventDefault()});
+
+// 主循环
+let gameOver=false;
+function loop(){
+    ctx.clearRect(0,0,W,H);
+    // 背景网格
+    ctx.strokeStyle='#2d7a2d';ctx.lineWidth=1;
+    for(let i=0;i<W;i+=40){ctx.beginPath();ctx.moveTo(i,0);ctx.lineTo(i,H);ctx.stroke();}
+    for(let i=0;i<H;i+=40){ctx.beginPath();ctx.moveTo(0,i);ctx.lineTo(W,i);ctx.stroke();}
+
+    if(!gameOver){
+        touchCtrl();
+        kimiAI();
+        bulletUpdate(player.bullets);
+        bulletUpdate(kimi.bullets);
+        checkHit();
+        updateHP();
+    }
+    drawTank(player,'#ff6b6b');
+    drawTank(kimi,'#4ecdc4');
+    drawBullets(player.bullets,'#ff6b6b');
+    drawBullets(kimi.bullets,'#4ecdc4');
+    requestAnimationFrame(loop);
+}
+function resetGame(){
+    player.hp=kimi.hp=100;
+    player.x=80;player.y=H/2;
+    kimi.x=W-80;kimi.y=H/2;
+    player.bullets=[];kimi.bullets=[];
+    gameOver=false;
+    document.getElementById('pauseMask').style.display='none';
+    updateHP();
+}
+resetGame();
+loop();
+</script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小游戏收纳盒 - 在线游戏乐园</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 头部导航 -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-gamepad"></i>
+                <span>小游戏收纳盒</span>
+            </div>
+            <nav class="nav">
+                <a href="#home" class="nav-link active">首页</a>
+                <a href="#categories" class="nav-link">分类</a>
+                <a href="#new-games" class="nav-link">新游戏</a>
+                <a href="#hot-games" class="nav-link">热门</a>
+            </nav>
+            <div class="search-box">
+                <input type="text" placeholder="搜索游戏..." id="searchInput">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <!-- 横幅轮播 -->
+        <section class="hero-section">
+            <div class="banner-container">
+                <div class="banner-slider">
+                    <div class="banner-item active">
+                        <img src="../imgs/223afd7f6698e3b1eb6b35c773d0e647.png" alt="热门游戏">
+                        <div class="banner-content">
+                            <h2>热门游戏推荐</h2>
+                            <p>发现最受欢迎的精彩游戏</p>
+                            <button class="play-btn">立即游玩</button>
+                        </div>
+                    </div>
+                    <div class="banner-item">
+                        <img src="../imgs/1693466330751890.png" alt="新游戏">
+                        <div class="banner-content">
+                            <h2>新游戏上线</h2>
+                            <p>体验最新最有趣的游戏内容</p>
+                            <button class="play-btn">立即游玩</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 游戏分类 -->
+        <section class="categories-section" id="categories">
+            <div class="container">
+                <h2 class="section-title">游戏分类</h2>
+                <div class="categories-grid">
+                    <div class="category-card" data-category="action">
+                        <div class="category-icon">
+                            <i class="fas fa-fist-raised"></i>
+                        </div>
+                        <h3>动作游戏</h3>
+                        <p>刺激的战斗体验</p>
+                    </div>
+                    <div class="category-card" data-category="puzzle">
+                        <div class="category-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>益智游戏</h3>
+                        <p>挑战你的智慧</p>
+                    </div>
+                    <div class="category-card" data-category="adventure">
+                        <div class="category-icon">
+                            <i class="fas fa-map"></i>
+                        </div>
+                        <h3>冒险游戏</h3>
+                        <p>探索未知世界</p>
+                    </div>
+                    <div class="category-card" data-category="sports">
+                        <div class="category-icon">
+                            <i class="fas fa-football-ball"></i>
+                        </div>
+                        <h3>体育游戏</h3>
+                        <p>运动竞技乐趣</p>
+                    </div>
+                    <div class="category-card" data-category="racing">
+                        <div class="category-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <h3>赛车游戏</h3>
+                        <p>速度与激情</p>
+                    </div>
+                    <div class="category-card" data-category="strategy">
+                        <div class="category-icon">
+                            <i class="fas fa-chess"></i>
+                        </div>
+                        <h3>策略游戏</h3>
+                        <p>运筹帷幄之中</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 热门游戏 -->
+        <section class="games-section" id="hot-games">
+            <div class="container">
+                <h2 class="section-title">热门游戏</h2>
+                <div class="games-grid" id="hotGamesGrid">
+                    <!-- 游戏卡片将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 新游戏 -->
+        <section class="games-section" id="new-games">
+            <div class="container">
+                <h2 class="section-title">最新游戏</h2>
+                <div class="games-grid" id="newGamesGrid">
+                    <!-- 游戏卡片将通过JavaScript动态生成 -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 游戏详情模态框 -->
+    <div class="modal" id="gameModal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="game-details">
+                <img id="modalGameImage" src="" alt="">
+                <div class="game-info">
+                    <h3 id="modalGameTitle"></h3>
+                    <p id="modalGameDescription"></p>
+                    <div class="game-meta">
+                        <span class="game-category" id="modalGameCategory"></span>
+                        <span class="game-players" id="modalGamePlayers"></span>
+                    </div>
+                    <button class="play-btn" id="modalPlayBtn">开始游戏</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>关于我们</h3>
+                    <p>小游戏收纳盒致力于为玩家提供最优质的在线游戏体验</p>
+                </div>
+                <div class="footer-section">
+                    <h3>游戏分类</h3>
+                    <ul>
+                        <li><a href="#">动作游戏</a></li>
+                        <li><a href="#">益智游戏</a></li>
+                        <li><a href="#">冒险游戏</a></li>
+                        <li><a href="#">体育游戏</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>联系我们</h3>
+                    <p>邮箱: contact@gamesbox.com</p>
+                    <p>客服QQ: 123456789</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 小游戏收纳盒. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../static/js/script.js"></script>
+</body>
+</html>

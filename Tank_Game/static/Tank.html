@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>坦克大作战</title>
+    <link rel="stylesheet" href="../static/css/css.css">
+</head>
+<body>
+    <!-- 版本选择页面 -->
+    <div id="versionSelect">
+        <div class="container">
+            <h1>坦克大战</h1>
+            <p>请选择您要玩的版本：</p>
+            <div class="buttons">
+                <button class="btn btn-desktop" id="desktopVersion">桌面版 (键盘控制)</button>
+                <button class="btn btn-mobile" id="mobileVersion">移动版 (触屏控制)</button>
+            </div>
+            <p>桌面版支持键盘WSAD和方向键控制<br>移动版支持虚拟摇杆和触屏控制</p>
+        </div>
+    </div>
+
+    <!-- 游戏容器 -->
+    <div id="gameContainer">
+        <header id="topBar">
+            <div id="modeSelection">
+                <span>游戏模式:</span>
+                <div id="modeButtons">
+                    <button id="mode1v1" class="mode-btn active">1v1</button>
+                    <button id="mode2v2" class="mode-btn">2v2</button>
+                </div>
+            </div>
+            <div id="scores">
+                <div class="player-score player1">玩家1: <span id="player1HP">100</span></div>
+                <div class="player-score player2">玩家2: <span id="player2HP">100</span></div>
+                <div class="player-score player3" style="display:none;">玩家3: <span id="player3HP">100</span></div>
+                <div class="player-score player4" style="display:none;">玩家4: <span id="player4HP">100</span></div>
+            </div>
+            <div></div> <!-- 占位元素保持居中 -->
+        </header>
+
+        <canvas id="canvas"></canvas>
+
+        <div id="ctrlRow">
+            <div class="ctrlBox">
+                <div class="stick" id="moveStick"><div class="knob"></div></div>
+            </div>
+            <div class="ctrlBox">
+                <button class="btn-fire" id="fireBtn">开火</button>
+            </div>
+        </div>
+
+        <div id="countdownOverlay"></div>
+
+        <div id="pauseMask">
+            <div id="finalTxt"></div>
+            <button id="restartBtn">再来一局</button>
+        </div>
+    </div>
+
+    <script src="../static/js/game.js"></script>
+</body>
+</html>
