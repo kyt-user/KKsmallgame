@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算器</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <!-- 计算器外壳 -->
+    <div class="calculator-container">
+        <h1 class="calculator-title">在线计算器</h1>
+
+        <!-- 显示屏：上方表达式 / 下方结果 -->
+        <div class="display">
+            <div class="expression" id="expression"></div>
+            <div class="result" id="result">0</div>
+        </div>
+
+        <!-- 按钮网格 -->
+        <div class="buttons-grid">
+            <!-- 第一行：功能键 & 除号 -->
+            <button class="btn btn-function" onclick="clearAll()">C</button>
+            <button class="btn btn-function" onclick="clearEntry()">CE</button>
+            <button class="btn btn-function" onclick="deleteLast()">⌫</button> <!-- 拼写修正 -->
+            <button class="btn btn-operator" onclick="appendOperator('/')">÷</button>
+
+            <!-- 数字与运算符继续按 4 列排 -->
+            <button class="btn btn-number" onclick="appendNumber('7')">7</button>
+            <button class="btn btn-number" onclick="appendNumber('8')">8</button>
+            <button class="btn btn-number" onclick="appendNumber('9')">9</button>
+            <button class="btn btn-operator" onclick="appendOperator('*')">*</button>
+
+            <button class="btn btn-number" onclick="appendNumber('4')">4</button>
+            <button class="btn btn-number" onclick="appendNumber('5')">5</button>
+            <button class="btn btn-number" onclick="appendNumber('6')">6</button>
+            <button class="btn btn-operator" onclick="appendOperator('-')">-</button>
+
+            <button class="btn btn-number" onclick="appendNumber('1')">1</button>
+            <button class="btn btn-number" onclick="appendNumber('2')">2</button>
+            <button class="btn btn-number" onclick="appendNumber('3')">3</button>
+            <button class="btn btn-operator" onclick="appendOperator('+')">+</button>
+
+            <!-- 最后一行：0 占两格，小数点，等号 -->
+            <button class="btn btn-number btn-zero" onclick="appendNumber('0')">0</button>
+            <button class="btn btn-number" onclick="appendDecimal()">.</button>
+            <button class="btn btn-equals" onclick="calculate()">=</button>
+        </div>
+
+        <!-- 计算历史区 -->
+        <div class="history" id="history">
+            <div class="history-title">计算历史</div>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <!-- 逻辑代码 -->
+    <script src="./js/style.js"></script>
+</body>
+</html>

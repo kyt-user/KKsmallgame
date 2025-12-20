@@ -61,6 +61,16 @@ const gamesData = {
       link: " ",
       featured: true,
     },
+    {
+      id: 7,
+      title: "简易计算器",
+      description: "一个简单的计算器，用于进行数学运算",
+      category: "工具",
+      players: "单人",
+      image: "../imgs/简易计算器.webp",
+      link: "../../Calculator_page/stastic/index.html",
+      featured: true,
+    },
   ],
   new: [
     // {

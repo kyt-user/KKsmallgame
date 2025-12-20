@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .calculator-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .calculator-title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .display {
+            background: #2c3e50;
+            color: white;
+            font-size: 28px;
+            padding: 20px;
+            text-align: right;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            min-height: 80px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .display .expression {
+            font-size: 14px;
+            color: #bdc3c7;
+            margin-bottom: 5px;
+            min-height: 20px;
+        }
+
+        .display .result {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ecf0f1;
+        }
+
+        .buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-number {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-number:hover {
+            background: #2980b9;
+        }
+
+        .btn-operator {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-operator:hover {
+            background: #c0392b;
+        }
+
+        .btn-function {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-function:hover {
+            background: #7f8c8d;
+        }
+
+        .btn-equals {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-equals:hover {
+            background: #229954;
+        }
+
+        .btn-zero {
+            grid-column: span 2;
+        }
+
+        .error {
+            color: #e74c3c !important;
+            font-size: 16px !important;
+        }
+
+        .history {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .history-title {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .history-item {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 5px;
+            padding: 5px;
+            background: white;
+            border-radius: 5px;
+            border-left: 3px solid #3498db;
+        }
+
+        @media (max-width: 480px) {
+            .calculator-container {
+                padding: 20px;
+            }
+            
+            .btn {
+                padding: 15px;
+                font-size: 16px;
+            }
+            
+            .display {
+                font-size: 24px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <h1 class="calculator-title">🧮 在线计算器</h1>
+        
+        <div class="display">
+            <div class="expression" id="expression"></div>
+            <div class="result" id="result">0</div>
+        </div>
+
+        <div class="buttons-grid">
+            <button class="btn btn-function" onclick="clearAll()">C</button>
+            <button class="btn btn-function" onclick="clearEntry()">CE</button>
+            <button class="btn btn-function" onclick="deleteLast()">⌫</button>
+            <button class="btn btn-operator" onclick="appendOperator('/')">÷</button>
+            
+            <button class="btn btn-number" onclick="appendNumber('7')">7</button>
+            <button class="btn btn-number" onclick="appendNumber('8')">8</button>
+            <button class="btn btn-number" onclick="appendNumber('9')">9</button>
+            <button class="btn btn-operator" onclick="appendOperator('*')">×</button>
+            
+            <button class="btn btn-number" onclick="appendNumber('4')">4</button>
+            <button class="btn btn-number" onclick="appendNumber('5')">5</button>
+            <button class="btn btn-number" onclick="appendNumber('6')">6</button>
+            <button class="btn btn-operator" onclick="appendOperator('-')">-</button>
+            
+            <button class="btn btn-number" onclick="appendNumber('1')">1</button>
+            <button class="btn btn-number" onclick="appendNumber('2')">2</button>
+            <button class="btn btn-number" onclick="appendNumber('3')">3</button>
+            <button class="btn btn-operator" onclick="appendOperator('+')">+</button>
+            
+            <button class="btn btn-number btn-zero" onclick="appendNumber('0')">0</button>
+            <button class="btn btn-number" onclick="appendDecimal()">.</button>
+            <button class="btn btn-equals" onclick="calculate()">=</button>
+        </div>
+
+        <div class="history" id="history">
+            <div class="history-title">📊 计算历史</div>
+            <div id="historyList"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentExpression = '';
+        let currentResult = '0';
+        let history = [];
+        let shouldResetDisplay = false;
+
+        function updateDisplay() {
+            document.getElementById('expression').textContent = currentExpression;
+            document.getElementById('result').textContent = currentResult;
+        }
+
+        function appendNumber(num) {
+            if (shouldResetDisplay) {
+                currentExpression = '';
+                shouldResetDisplay = false;
+            }
+            
+            // 防止多个前导零
+            if (currentExpression === '0' && num === '0') return;
+            if (currentExpression === '0' && num !== '0') {
+                currentExpression = num;
+            } else {
+                currentExpression += num;
+            }
+            updateDisplay();
+        }
+
+        function appendOperator(operator) {
+            if (shouldResetDisplay) {
+                currentExpression = currentResult;
+                shouldResetDisplay = false;
+            }
+            
+            // 防止连续输入运算符
+            const lastChar = currentExpression.slice(-1);
+            if (['+', '-', '*', '/'].includes(lastChar)) {
+                currentExpression = currentExpression.slice(0, -1);
+            }
+            
+            currentExpression += operator;
+            updateDisplay();
+        }
+
+        function appendDecimal() {
+            if (shouldResetDisplay) {
+                currentExpression = '0';
+                shouldResetDisplay = false;
+            }
+            
+            // 获取当前数字部分
+            const parts = currentExpression.split(/[\+\-\*\/]/);
+            const currentNumber = parts[parts.length - 1];
+            
+            // 如果当前数字已经包含小数点，则不再添加
+            if (currentNumber.includes('.')) return;
+            
+            // 如果当前数字为空或运算符后，添加0.
+            if (currentNumber === '' || ['+', '-', '*', '/'].includes(currentExpression.slice(-1))) {
+                currentExpression += '0.';
+            } else {
+                currentExpression += '.';
+            }
+            
+            updateDisplay();
+        }
+
+        function clearAll() {
+            currentExpression = '';
+            currentResult = '0';
+            shouldResetDisplay = false;
+            updateDisplay();
+        }
+
+        function clearEntry() {
+            currentExpression = '';
+            updateDisplay();
+        }
+
+        function deleteLast() {
+            if (currentExpression.length > 0) {
+                currentExpression = currentExpression.slice(0, -1);
+                updateDisplay();
+            }
+        }
+
+        function calculate() {
+            if (currentExpression === '') return;
+            
+            try {
+                // 替换显示符号为计算符号
+                let expression = currentExpression.replace(/×/g, '*').replace(/÷/g, '/');
+                
+                // 检查表达式是否有效
+                if (!isValidExpression(expression)) {
+                    throw new Error('无效表达式');
+                }
+                
+                // 计算结果
+                let result = eval(expression);
+                
+                // 处理结果
+                if (isNaN(result) || !isFinite(result)) {
+                    throw new Error('数学错误');
+                }
+                
+                // 格式化结果
+                if (Number.isInteger(result)) {
+                    currentResult = result.toString();
+                } else {
+                    // 保留最多8位小数，避免浮点数精度问题
+                    currentResult = parseFloat(result.toFixed(8)).toString();
+                }
+                
+                // 添加到历史记录
+                addToHistory(currentExpression, currentResult);
+                
+                shouldResetDisplay = true;
+                
+            } catch (error) {
+                currentResult = '错误';
+                document.getElementById('result').classList.add('error');
+                setTimeout(() => {
+                    document.getElementById('result').classList.remove('error');
+                    currentResult = '0';
+                    updateDisplay();
+                }, 2000);
+            }
+            
+            updateDisplay();
+        }
+
+        function isValidExpression(expr) {
+            // 检查括号是否匹配
+            let parentheses = 0;
+            for (let char of expr) {
+                if (char === '(') parentheses++;
+                if (char === ')') parentheses--;
+                if (parentheses < 0) return false;
+            }
+            if (parentheses !== 0) return false;
+            
+            // 检查是否以运算符结尾
+            if (['+', '-', '*', '/'].includes(expr.slice(-1))) return false;
+            
+            // 检查是否包含非法字符
+            if (!/^[0-9+\-*/().\s]+$/.test(expr)) return false;
+            
+            return true;
+        }
+
+        function addToHistory(expression, result) {
+            const historyItem = {
+                expression: expression,
+                result: result,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            
+            history.unshift(historyItem);
+            
+            // 只保留最近10条记录
+            if (history.length > 10) {
+                history = history.slice(0, 10);
+            }
+            
+            updateHistoryDisplay();
+        }
+
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            if (history.length === 0) {
+                historyList.innerHTML = '<div style="color: #999; text-align: center;">暂无历史记录</div>';
+                return;
+            }
+            
+            history.forEach(item => {
+                const historyDiv = document.createElement('div');
+                historyDiv.className = 'history-item';
+                historyDiv.innerHTML = `
+                    <div style="font-size: 11px; color: #999; margin-bottom: 2px;">${item.timestamp}</div>
+                    <div>${item.expression} = ${item.result}</div>
+                `;
+                historyList.appendChild(historyDiv);
+            });
+        }
+
+        // 键盘支持
+        document.addEventListener('keydown', function(event) {
+            const key = event.key;
+            
+            if (key >= '0' && key <= '9') {
+                appendNumber(key);
+            } else if (['+', '-', '*', '/'].includes(key)) {
+                appendOperator(key);
+            } else if (key === '.') {
+                appendDecimal();
+            } else if (key === 'Enter' || key === '=') {
+                calculate();
+            } else if (key === 'Escape') {
+                clearAll();
+            } else if (key === 'Backspace') {
+                deleteLast();
+            }
+        });
+
+        // 初始化显示
+        updateDisplay();
+        updateHistoryDisplay();
+    </script>
+</body>
+</html>
